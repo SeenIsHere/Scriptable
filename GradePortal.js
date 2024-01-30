@@ -14,7 +14,7 @@ module.exports = { run: async () => {
     Script.complete();
   }
 
-  const [USERNAME, PASSWORD, NAME, MP] = input;
+  const [USER, PASS, NAME, MP] = input;
 
   const headers = {
     "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
@@ -173,7 +173,7 @@ module.exports = { run: async () => {
 
 
 
-  var portal = new GradePortal(USERNAME, PASS);
+  var portal = new GradePortal(USER, PASS);
   var cookie = await portal.verify_get_cookie();
   
   var courses = MP == 0 ? : (await portal.get_courses(cookie)) ? (await portal.get_courses(cookie, MP));
