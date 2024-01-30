@@ -16,6 +16,8 @@ module.exports = { run: async () => {
 
   const [USER, PASS, NAME, MP] = input;
 
+  console.log(USER, PASS, NAME, MP)
+  
   const headers = {
     "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
     "accept-language": "en-US,en;q=0.9,it;q=0.8",
@@ -176,7 +178,7 @@ module.exports = { run: async () => {
   var portal = new GradePortal(USER, PASS);
   var cookie = await portal.verify_get_cookie();
   
-  var courses = MP == 0 ? : (await portal.get_courses(cookie)) ? (await portal.get_courses(cookie, MP));
+  var courses = await portal.get_courses(cookie, MP || null)
   var data = courses.map(x => x.classname + ": " + x.grade).join("\n");
   var last_updated = new Date();
 
