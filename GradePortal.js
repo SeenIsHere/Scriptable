@@ -6,13 +6,15 @@ module.exports = { run: async () => {
 
   const errorWidget = new ListWidget();
         const mainError = errorWidget.addStack()
-              mainError.addText("Missing Setup Parameters:\n1.\n2.")
+              mainError.addText("Format: Username Password Name MarkingPeriod\nUsername: Student ID (ex. 012018888)\nName (ex. Sean) !!Must be a single word!!\nMarking Period 1-4 (0 for current)")
 
   if(input.length != 4){
     errorWidget.presentMedium();
     Script.setWidget(errorWidget);
     Script.complete();
   }
+
+  const [USERNAME, PASSWORD, NAME, MP] = input;
 
   const headers = {
     "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
@@ -171,9 +173,10 @@ module.exports = { run: async () => {
 
 
 
-  var portal = new GradePortal(USER, PASS);
+  var portal = new GradePortal(USERNAME, PASS);
   var cookie = await portal.verify_get_cookie();
-  var courses = await portal.get_courses(cookie);
+  
+  var courses = MP == 0 ? : (await portal.get_courses(cookie)) ? (await portal.get_courses(cookie, MP));
   var data = courses.map(x => x.classname + ": " + x.grade).join("\n");
   var last_updated = new Date();
 
