@@ -1,22 +1,38 @@
+// Variables used by Scriptable.
+// These must be at the very top of the file. Do no edit
+// icon-color: pink; icon-glyph: magic;
+
 module.exports = { run: async () => {
-  //Version: 2.0.0
-  const input = args.widgetParameter.split(" ");
+  
+//Version: 3.0.0
+if(config.runsInWidget){
+  const uuid = args.widgetParameter || ""
+  let fm = FileManager.local()
+  let ldir = fm.libraryDirectory();
+  
+  let saved = fm.readString(ldir + "/gpmain.json");
+  if(saved){
+    saved = JSON.parse(saved)
+    if(uuid in saved) saved = saved[uuid]
+    else saved = null
+  }
+
   var htmlparser = importModule("HTMLParser");
   const parse = htmlparser.parse;
-
-  const errorWidget = new ListWidget();
-        const mainError = errorWidget.addStack()
-              mainError.addText("Format: Username Password Name MarkingPeriod\nUsername: Student ID (ex. 012018888)\nName (ex. Sean) !!Must be a single word!!\nMarking Period 1-4 (0 for current)")
-
-  if(input.length != 4){
+              
+  if(!saved){
+    const errorWidget = new ListWidget();
+    const mainError = errorWidget.addStack()
+    mainError.addText("Tap to Complete Setup!")
     errorWidget.presentMedium();
     Script.setWidget(errorWidget);
     Script.complete();
+    return
   }
 
-  const [USER, PASS, NAME, MP] = input;
+  const { PASS, NAME, USER, COLOR } = saved;
+let MP = 0
 
-  console.log(USER, PASS, NAME, MP)
   
   const headers = {
     "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
@@ -188,6 +204,7 @@ module.exports = { run: async () => {
   let widget = new ListWidget();
 
   widget.backgroundColor = Color.dynamic(Color.white(), Color.blue());
+  if(COLOR) widget.backgroundColor = new Color(COLOR, 100)
 
   let titleStack = widget.addStack();
   let titleField = titleStack.addText(title);
@@ -214,5 +231,44 @@ module.exports = { run: async () => {
   widget.presentMedium()
   Script.setWidget(widget);
   Script.complete();
-  //added
-} }
+  } else {
+    setup()
+    Script.complete()
+}
+
+async function setup(){
+    let a = new Alert()
+    a.title = "Config Widget"
+    a.message = "A random ID was copied to your clipboard. Press and hold on the widget then paste into the \"parameter field\""
+    let idfield = a.addTextField("Enter ID", "01201")
+    idfield.setNumberPadKeyboard()
+    a.addSecureTextField("Enter Password")
+    a.addTextField("Enter Display Name")
+    a.addTextField("Enter Hex Color")
+    a.addAction("Done")
+    a.addCancelAction("Cancel")
+    let act = await a.present()
+    
+    if(act != -1){
+      let USER = a.textFieldValue(0)
+      let PASS = a.textFieldValue(1)
+      let NAME = a.textFieldValue(2)
+      let COLOR = a.textFieldValue(3) || null;
+      let uuid = UUID.string()
+      Pasteboard.copy(uuid)
+      
+      let fm = FileManager.local();
+      let ldir = fm.libraryDirectory();
+      
+      let saved = fm.readString(ldir + "/gpmain.json") || "{}";
+      
+      saved = JSON.parse(saved)
+      
+      saved[uuid] = {
+        COLOR, USER, PASS, NAME
+      }
+      
+      fm.writeString(ldir + "/gpmain.json", JSON.stringify(saved))
+    }
+}
+}}
