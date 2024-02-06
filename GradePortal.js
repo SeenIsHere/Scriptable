@@ -244,7 +244,7 @@ async function setup(){
     idfield.setNumberPadKeyboard()
     a.addSecureTextField("Enter Password")
     a.addTextField("Enter Display Name")
-    a.addTextField("Enter Hex Color")
+    a.addTextField("Enter Hex Color (Leave blank for default)")
     a.addAction("Done")
     a.addCancelAction("Cancel")
     let act = await a.present()
