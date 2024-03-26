@@ -3,18 +3,18 @@
 // icon-color: pink; icon-glyph: magic;
 
 module.exports = { run: async () => {
-  
-//Version: 3.0.0
+VERSION = "3.1.0"
+
 if(config.runsInWidget){
-  const uuid = args.widgetParameter || ""
   let fm = FileManager.local()
   let ldir = fm.libraryDirectory();
   
   let saved = fm.readString(ldir + "/gpmain.json");
   if(saved){
     saved = JSON.parse(saved)
-    if(uuid in saved) saved = saved[uuid]
-    else saved = null
+    
+    // if still on version 3 reset
+    if(!("version" in saved)) saved = null
   }
 
   var htmlparser = importModule("HTMLParser");
@@ -31,7 +31,7 @@ if(config.runsInWidget){
   }
 
   const { PASS, NAME, USER, COLOR } = saved;
-let MP = 0
+  let MP = 0
 
   
   const headers = {
@@ -239,12 +239,12 @@ let MP = 0
 async function setup(){
     let a = new Alert()
     a.title = "Config Widget"
-    a.message = "A random ID was copied to your clipboard. Press and hold on the widget then paste into the \"parameter field\""
+    a.message = "Leave field blank toEx ID Format: 012018398"
     let idfield = a.addTextField("Enter ID", "01201")
     idfield.setNumberPadKeyboard()
     a.addSecureTextField("Enter Password")
     a.addTextField("Enter Display Name")
-    a.addTextField("Enter Hex Color (Leave blank for default)")
+    a.addTextField("Enter Hex Color")
     a.addAction("Done")
     a.addCancelAction("Cancel")
     let act = await a.present()
@@ -254,8 +254,6 @@ async function setup(){
       let PASS = a.textFieldValue(1)
       let NAME = a.textFieldValue(2)
       let COLOR = a.textFieldValue(3) || null;
-      let uuid = UUID.string()
-      Pasteboard.copy(uuid)
       
       let fm = FileManager.local();
       let ldir = fm.libraryDirectory();
@@ -263,10 +261,11 @@ async function setup(){
       let saved = fm.readString(ldir + "/gpmain.json") || "{}";
       
       saved = JSON.parse(saved)
-      
-      saved[uuid] = {
-        COLOR, USER, PASS, NAME
-      }
+
+      [USER, PASS, NAME, COLOR, VERSION].forEach((prop) => {
+        if(prop == "") return;
+        saved[prop] = prop
+      })
       
       fm.writeString(ldir + "/gpmain.json", JSON.stringify(saved))
     }
