@@ -3,18 +3,23 @@
 // icon-color: pink; icon-glyph: magic;
 
 module.exports = { run: async () => {
+  
 VERSION = "3.1.0"
+let fm = FileManager.local()
+let ldir = fm.libraryDirectory();
 
 if(config.runsInWidget) {
-  let fm = FileManager.local()
-  let ldir = fm.libraryDirectory();
+
   
   let saved = fm.readString(ldir + "/gpmain.json");
   if(saved){
     saved = JSON.parse(saved)
     
-    // if still on version 3 reset
-    if(!("version" in saved)) saved = null
+    // if there is no version reset credentials
+    if(!("VERSION" in saved)){
+      fm.writeString(ldir + "/gpmain.json", "{}")
+      saved = null
+    }
   }
 
   var htmlparser = importModule("HTMLParser");
@@ -32,7 +37,6 @@ if(config.runsInWidget) {
 
   const { PASS, NAME, USER, COLOR } = saved;
   let MP = 0
-
   
   const headers = {
     "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
@@ -239,7 +243,7 @@ if(config.runsInWidget) {
 async function setup(){
     let a = new Alert()
     a.title = "Config Widget"
-    a.message = "Leave field blank toEx ID Format: 012018398"
+    a.message = "Leave field blank to\nEx ID Format: 012018398"
     let idfield = a.addTextField("Enter ID", "01201")
     idfield.setNumberPadKeyboard()
     a.addSecureTextField("Enter Password")
@@ -255,18 +259,15 @@ async function setup(){
       let NAME = a.textFieldValue(2);
       let COLOR = a.textFieldValue(3) || null;
       
-      let fm = FileManager.local();
-      let ldir = fm.libraryDirectory();
-      
       let saved = fm.readString(ldir + "/gpmain.json") || "{}";
       
       saved = JSON.parse(saved);
 
-      [USER, PASS, NAME, COLOR, VERSION].forEach((prop) => {
-        console.log(prop)
-        if(prop == "") return;
-        saved[prop] = prop
-      })
+      if(USER) saved["USER"] = USER
+      if(PASS) saved["PASS"] = PASS
+      if(NAME) saved["NAME"] = NAME
+      if(COLOR) saved["COLOR"] = COLOR
+      saved["VERSION"] = VERSION
       
       fm.writeString(ldir + "/gpmain.json", JSON.stringify(saved))
     }
