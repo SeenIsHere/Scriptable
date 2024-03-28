@@ -5,7 +5,7 @@
 module.exports = { run: async () => {
 VERSION = "3.1.0"
 
-if(config.runsInWidget){
+if(config.runsInWidget) {
   let fm = FileManager.local()
   let ldir = fm.libraryDirectory();
   
@@ -250,9 +250,9 @@ async function setup(){
     let act = await a.present()
     
     if(act != -1){
-      let USER = a.textFieldValue(0)
-      let PASS = a.textFieldValue(1)
-      let NAME = a.textFieldValue(2)
+      let USER = a.textFieldValue(0);
+      let PASS = a.textFieldValue(1);
+      let NAME = a.textFieldValue(2);
       let COLOR = a.textFieldValue(3) || null;
       
       let fm = FileManager.local();
@@ -260,9 +260,10 @@ async function setup(){
       
       let saved = fm.readString(ldir + "/gpmain.json") || "{}";
       
-      saved = JSON.parse(saved)
+      saved = JSON.parse(saved);
 
       [USER, PASS, NAME, COLOR, VERSION].forEach((prop) => {
+        console.log(prop)
         if(prop == "") return;
         saved[prop] = prop
       })
@@ -270,4 +271,5 @@ async function setup(){
       fm.writeString(ldir + "/gpmain.json", JSON.stringify(saved))
     }
 }
+  
 }}
