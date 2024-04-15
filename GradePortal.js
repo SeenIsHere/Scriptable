@@ -244,14 +244,14 @@ if( true || config.runsInWidget) {
   
   widget.addSpacer(12);
 
-  let desc = widget.addText(data);
+  let desc = titleStack.addText(data);
       desc.minimumScaleFactor = 0.5;
       desc.textColor = Color.dynamic(Color.black(), Color.white());
       desc.font = Font.semiboldSystemFont(16);
-
-  widget.addImage(pfp);
-
   widget.addSpacer(8);
+
+  let imgStack = widget.addStack()
+  imgStack.addImage(pfp)
   
     const updatedTime = widget.addDate(last_updated)
   updatedTime.applyRelativeStyle()
