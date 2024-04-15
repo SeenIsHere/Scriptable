@@ -209,47 +209,12 @@ if( true || config.runsInWidget) {
 
       var content = await req.loadString();
 
-	//finds all h6 tags which contain student data
-	var student_data = parse(content)
-	  .querySelectorAll("h6")
-	  .map((x) => x.text.trim());
-
-	//if the length is 9, the dataset is from a previous year
-	if (student_data.length == 9) {
-	  student_data.splice(5, 1);
-	  student_data[7] = null;
-	}
-
-	//after parsing extracts data by name
-	var [_, name, id, grade, id, counselor, homeroom, attendance_state] =
-	  student_data;
-
-	//finds all imgs, checks which contains student_pictures in the url
-	var id_photo_url = parse(content)
-	  .querySelectorAll("img")
-	  .filter((x) => x.toString().includes("student_pictures"))[0]
-	  .getAttribute("src");
-
-	//formats data and removes extra text
-	id = Number(id.split(": ")[1]);
-	grade = Number(grade.split(": ")[1].slice(0, 2));
-	counselor = counselor.split(": ")[1];
-	homeroom = homeroom.split("\n\n")[1];
-
-	attendance_state = attendance_state
-	  ? attendance_state.split("\n\n")[1]
-	  : null;
-
-	//returns as obj
-  	return {
-  	  name,
-  	  id,
-  	  grade,
-  	  counselor,
-  	  homeroom,
-  	  attendance_state,
-  	  id_photo_url,
-  	};
+      //finds all imgs, checks which contains student_pictures in the url
+      var id_photo_url = parse(content)
+        .querySelector("img")
+        .getAttribute("src");
+    
+      return id_photo_url
   }
 };
 
@@ -258,7 +223,7 @@ if( true || config.runsInWidget) {
   var portal = new GradePortal(USER, PASS);
   var cookie = await portal.verify_get_cookie();
 
-  var { id_photo_url } = await portal.getStudent(cookie)
+  var id_photo_url = await portal.getStudent(cookie)
   
   var courses = await portal.get_courses(cookie, MP || null)
   var data = courses.map(x => x.classname + ": " + x.grade).join("\n");
