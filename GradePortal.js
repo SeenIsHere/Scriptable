@@ -195,11 +195,11 @@ if( true || config.runsInWidget) {
 
     async getStudent(cookie) {
 
-        var options = {
+      var options = {
           "headers": { ...headers, "cookie": cookie },
           "body": null,
           "method": "GET"
-        }
+      }
 
       var req = new Request("https://www.fridaystudentportal.com/portal/index.cfm?f=homepage.cfm&r=5");
 
@@ -210,11 +210,12 @@ if( true || config.runsInWidget) {
       var content = await req.loadString();
 
       //finds all imgs, checks which contains student_pictures in the url
-      var id_photo_url = parse(content)
-        .querySelector("img")
-        .getAttribute("src");
-    
-      return id_photo_url
+      var id_photo_url = parse(content).querySelector("img").getAttribute("src");
+
+      var imgreq = new Request(id_photo_url)
+      req.method = "GET"
+      
+      return await imgreq.loadImage()
   }
 };
 
@@ -223,7 +224,7 @@ if( true || config.runsInWidget) {
   var portal = new GradePortal(USER, PASS);
   var cookie = await portal.verify_get_cookie();
 
-  var id_photo_url = await portal.getStudent(cookie)
+  var pfp = await portal.getStudent(cookie)
   
   var courses = await portal.get_courses(cookie, MP || null)
   var data = courses.map(x => x.classname + ": " + x.grade).join("\n");
@@ -249,7 +250,7 @@ if( true || config.runsInWidget) {
       desc.font = Font.semiboldSystemFont(16);
 
   let img = widget.addImage();
-  img.url = id_photo_url
+  img.image = pfp
 
   widget.addSpacer(8);
   
