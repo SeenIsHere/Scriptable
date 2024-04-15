@@ -4,17 +4,22 @@
 
 module.exports = { run: async () => {
   
-//Version: 3.0.0
-if(config.runsInWidget){
-  const uuid = args.widgetParameter || ""
-  let fm = FileManager.local()
-  let ldir = fm.libraryDirectory();
+VERSION = "3.1.0"
+let fm = FileManager.local()
+let ldir = fm.libraryDirectory();
+
+if(config.runsInWidget) {
+
   
   let saved = fm.readString(ldir + "/gpmain.json");
   if(saved){
     saved = JSON.parse(saved)
-    if(uuid in saved) saved = saved[uuid]
-    else saved = null
+    
+    // if there is no version reset credentials
+    if(!("VERSION" in saved)){
+      fm.writeString(ldir + "/gpmain.json", "{}")
+      saved = null
+    }
   }
 
   var htmlparser = importModule("HTMLParser");
@@ -24,6 +29,7 @@ if(config.runsInWidget){
     const errorWidget = new ListWidget();
     const mainError = errorWidget.addStack()
     mainError.addText("Tap to Complete Setup!")
+    mainError.addText("If you see this after setup, wait for it to refresh")
     errorWidget.presentMedium();
     Script.setWidget(errorWidget);
     Script.complete();
@@ -31,8 +37,7 @@ if(config.runsInWidget){
   }
 
   const { PASS, NAME, USER, COLOR } = saved;
-let MP = 0
-
+  let MP = 0
   
   const headers = {
     "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
@@ -239,36 +244,34 @@ let MP = 0
 async function setup(){
     let a = new Alert()
     a.title = "Config Widget"
-    a.message = "A random ID was copied to your clipboard. Press and hold on the widget then paste into the \"parameter field\""
+    a.message = "Leave field blank to\nEx ID Format: 012018398"
     let idfield = a.addTextField("Enter ID", "01201")
     idfield.setNumberPadKeyboard()
     a.addSecureTextField("Enter Password")
     a.addTextField("Enter Display Name")
-    a.addTextField("Enter Hex Color (Leave blank for default)")
+    a.addTextField("Enter Hex Color")
     a.addAction("Done")
     a.addCancelAction("Cancel")
     let act = await a.present()
     
     if(act != -1){
-      let USER = a.textFieldValue(0)
-      let PASS = a.textFieldValue(1)
-      let NAME = a.textFieldValue(2)
+      let USER = a.textFieldValue(0);
+      let PASS = a.textFieldValue(1);
+      let NAME = a.textFieldValue(2);
       let COLOR = a.textFieldValue(3) || null;
-      let uuid = UUID.string()
-      Pasteboard.copy(uuid)
-      
-      let fm = FileManager.local();
-      let ldir = fm.libraryDirectory();
       
       let saved = fm.readString(ldir + "/gpmain.json") || "{}";
       
-      saved = JSON.parse(saved)
-      
-      saved[uuid] = {
-        COLOR, USER, PASS, NAME
-      }
+      saved = JSON.parse(saved);
+
+      if(USER) saved["USER"] = USER
+      if(PASS) saved["PASS"] = PASS
+      if(NAME) saved["NAME"] = NAME
+      if(COLOR) saved["COLOR"] = COLOR
+      saved["VERSION"] = VERSION
       
       fm.writeString(ldir + "/gpmain.json", JSON.stringify(saved))
     }
 }
+  
 }}
