@@ -29,6 +29,7 @@ if(config.runsInWidget) {
     const errorWidget = new ListWidget();
     const mainError = errorWidget.addStack()
     mainError.addText("Tap to Complete Setup!")
+    mainError.addText("If you see this after setup, wait for it to refresh")
     errorWidget.presentMedium();
     Script.setWidget(errorWidget);
     Script.complete();
