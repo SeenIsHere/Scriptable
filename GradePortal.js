@@ -249,8 +249,7 @@ if( true || config.runsInWidget) {
       desc.textColor = Color.dynamic(Color.black(), Color.white());
       desc.font = Font.semiboldSystemFont(16);
 
-  let img = widget.addImage();
-  img.image = pfp
+  widget.addImage(pfp);
 
   widget.addSpacer(8);
   
