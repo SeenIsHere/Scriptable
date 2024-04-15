@@ -258,7 +258,7 @@ if( true || config.runsInWidget) {
   var portal = new GradePortal(USER, PASS);
   var cookie = await portal.verify_get_cookie();
 
-  var { id_photo_url } = await portal.getStudent()
+  var { id_photo_url } = await portal.getStudent(cookie)
   
   var courses = await portal.get_courses(cookie, MP || null)
   var data = courses.map(x => x.classname + ": " + x.grade).join("\n");
