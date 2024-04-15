@@ -8,7 +8,7 @@ VERSION = "3.3.0"
 let fm = FileManager.local()
 let ldir = fm.libraryDirectory();
 
-if(config.runsInWidget) {
+if( true || config.runsInWidget) {
 
   
   let saved = fm.readString(ldir + "/gpmain.json");
