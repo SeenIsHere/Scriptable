@@ -1,5 +1,5 @@
 // Variables used by Scriptable.
-// These must be at the very top of the file. Do no edit
+// These must be at the very top of the file. Do not edit.
 // icon-color: pink; icon-glyph: magic;
 
 module.exports = { run: async () => {
@@ -232,26 +232,37 @@ if( true || config.runsInWidget) {
 
   let title = NAME + "'s Grades";
   let widget = new ListWidget();
+  
 
   widget.backgroundColor = Color.dynamic(Color.white(), Color.blue());
   if(COLOR) widget.backgroundColor = new Color(COLOR, 100)
 
-  let titleStack = widget.addStack();
+
+  let parentStack = widget.addStack()
+  parentStack.layoutVertically()
+  
+  let titleStack = parentStack.addStack();
+  let contentStack = parentStack.addStack()
+  
+  let gradeStack = contentStack.addStack()
+  contentStack.addSpacer()
+  let img = contentStack.addImage(pfp)
+  img.cornerRadius = 5
+  img.rightAlignImage()
+  
   let titleField = titleStack.addText(title);
       titleField.textColor = Color.dynamic(Color.black(), Color.white());
       titleField.textOpacity = 0.7;
       titleField.font = Font.mediumSystemFont(13);
   
-  widget.addSpacer(12);
+  titleStack.addSpacer(12);
 
-  let desc = titleStack.addText(data);
+  let desc = gradeStack.addText(data);
       desc.minimumScaleFactor = 0.5;
       desc.textColor = Color.dynamic(Color.black(), Color.white());
       desc.font = Font.semiboldSystemFont(16);
-  widget.addSpacer(8);
+  titleStack.addSpacer(8);
 
-  let imgStack = widget.addStack()
-  imgStack.addImage(pfp)
   
     const updatedTime = widget.addDate(last_updated)
   updatedTime.applyRelativeStyle()
