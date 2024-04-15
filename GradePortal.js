@@ -4,7 +4,7 @@
 
 module.exports = { run: async () => {
   
-VERSION = "3.1.0"
+VERSION = "3.3.0"
 let fm = FileManager.local()
 let ldir = fm.libraryDirectory();
 
@@ -258,7 +258,7 @@ if(config.runsInWidget) {
   var portal = new GradePortal(USER, PASS);
   var cookie = await portal.verify_get_cookie();
 
-  console.log(await portal.getStudent())
+  var { id_photo_url } = await portal.getStudent()
   
   var courses = await portal.get_courses(cookie, MP || null)
   var data = courses.map(x => x.classname + ": " + x.grade).join("\n");
@@ -282,6 +282,9 @@ if(config.runsInWidget) {
       desc.minimumScaleFactor = 0.5;
       desc.textColor = Color.dynamic(Color.black(), Color.white());
       desc.font = Font.semiboldSystemFont(16);
+
+  let img = widget.addImage();
+  img.url = id_photo_url
 
   widget.addSpacer(8);
   
