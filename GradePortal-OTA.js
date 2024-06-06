@@ -1,4 +1,4 @@
-const BASEURL = "https://raw.githubusercontent.com/SeenIsHere/Scriptable/beta-gpa/";
+const BASEURL = "https://raw.githubusercontent.com/SeenIsHere/Scriptable/beta-gpa";
 
 //Worked!
 
