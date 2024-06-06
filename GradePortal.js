@@ -5,13 +5,13 @@
 module.exports = { run: async () => {
 
 //UPDATER
-let impval = importModule("GradePortal-OTA");
-if(!impval?.v){
-  let main = new Request("https://raw.githubusercontent.com/SeenIsHere/Scriptable/beta-gpa/GradePortal-OTA.js")
-  let mainFileStr = await main.loadString();
-  const dir = FileManager.iCloud().documentsDirectory();
-  FileManager().iCloud().writeString(dir + "/GradePortal-OTA.js", mainFileStr)
-}
+// let impval = importModule("GradePortal-OTA");
+// if(!impval?.v){
+//   let main = new Request("https://raw.githubusercontent.com/SeenIsHere/Scriptable/beta-gpa/GradePortal-OTA.js")
+//   let mainFileStr = await main.loadString();
+//   const dir = FileManager.iCloud().documentsDirectory();
+//   FileManager().iCloud().writeString(dir + "/GradePortal-OTA.js", mainFileStr)
+// }
   
 VERSION = "3.3.0"
 let fm = FileManager.local()
